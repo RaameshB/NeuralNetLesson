@@ -5,25 +5,30 @@ import plotly.graph_objects as go
 class GradientDescentSimulator:
     def __init__(self, 
                  learning_rate=10, 
-                 title="3D Surface Plot: singleMinima",
+                 title="3D Surface Plot: Stochastic Gradient Descent",
                  ball_radius=0.15, 
                  max_iter=300, 
                  tolerance=1e-4, 
                  initial_pos=(6, 6),
-                 grid_range=(-10, 10),     # domain range for x,y
+                 grid_range=(-10, 10),
                  grid_points=100,
-                 camera_distance=1.0):     # <--- new parameter to control zoom
+                 camera_distance=1.0,
+                 noise_level=0,
+                 random_seed = None):
         """
-        :param learning_rate: Gradient descent step size.
+        :param learning_rate: SGD step size.
         :param title: Title for the 3D plot.
         :param ball_radius: The ball marker offset above the surface.
-        :param max_iter: Max number of iterations for gradient descent.
-        :param tolerance: Threshold for stopping gradient descent.
+        :param max_iter: Max number of iterations for SGD.
+        :param tolerance: Threshold for stopping SGD.
         :param initial_pos: (x0, y0) starting position of the ball.
         :param grid_range: (min, max) range for both x and y axes.
         :param grid_points: Number of points in each dimension for the surface grid.
         :param camera_distance: Distance of the camera from the origin (smaller => more zoom).
+        :param noise_level: Standard deviation of the noise added to the gradient.
         """
+        if random_seed is not None:
+            np.random.seed(random_seed)
         self.learning_rate = learning_rate
         self.title = title
         self.ball_radius = ball_radius
@@ -33,6 +38,7 @@ class GradientDescentSimulator:
         self.grid_range = grid_range
         self.grid_points = grid_points
         self.camera_distance = camera_distance
+        self.noise_level = noise_level
         
         # Build the simulation immediately and store the figure
         self.fig = self._build_simulation()
@@ -69,8 +75,8 @@ class GradientDescentSimulator:
             title_font_color="white",
             paper_bgcolor="grey",
             plot_bgcolor="grey",
-            width=800,   # Set width in pixels (8 inches * 100)
-            height=600,  # Set height in pixels (6 inches * 100)
+            width=800,
+            height=600,
             scene=dict(
                 xaxis=dict(visible=False, range=[x_range[0], x_range[1]]),
                 yaxis=dict(visible=False, range=[x_range[0], x_range[1]]),
@@ -80,7 +86,7 @@ class GradientDescentSimulator:
         )
         
         # ------------------------------------------------------------
-        # 2. Run Gradient Descent and collect the path
+        # 2. Run Stochastic Gradient Descent and collect the path
         # ------------------------------------------------------------
         x0, y0 = self.initial_pos
         traj_x = [x0]
@@ -91,6 +97,11 @@ class GradientDescentSimulator:
             current_x = traj_x[-1]
             current_y = traj_y[-1]
             grad_x, grad_y = self.numerical_grad(self.f_single_func, current_x, current_y)
+            
+            # Add noise to simulate stochastic gradient estimates.
+            grad_x += np.random.normal(0, self.noise_level)
+            grad_y += np.random.normal(0, self.noise_level)
+            
             step_x = self.learning_rate * grad_x
             step_y = self.learning_rate * grad_y
             if np.sqrt(step_x**2 + step_y**2) < self.tolerance:
@@ -175,23 +186,20 @@ class GradientDescentSimulator:
         fig.add_trace(initial_path)
         
         fig.update_layout(
-            updatemenus=[
-                dict(
-                    type="buttons",
-                    showactive=False,
-                    buttons=[dict(
-                        label="simulate gradient descent",
-                        method="animate",
-                        args=[None,
-                              {"frame": {"duration": 100, "redraw": True},
-                               "mode": "immediate",
-                               "transition": {"duration": 0}}]
-                    )],
-                    pad={"r": 10, "t": 10},
-                    x=0.5, xanchor="center",
-                    y=0.0, yanchor="bottom"
-                )
-            ],
+            updatemenus=[{
+                "type": "buttons",
+                "showactive": False,
+                "buttons": [{
+                    "label": "simulate SGD",
+                    "method": "animate",
+                    "args": [None, {"frame": {"duration": 100, "redraw": True},
+                                    "mode": "immediate",
+                                    "transition": {"duration": 0}}]
+                }],
+                "pad": {"r": 10, "t": 10},
+                "x": 0.5, "xanchor": "center",
+                "y": 0.0, "yanchor": "bottom"
+            }],
             annotations=[dict(
                 text="Iterations: 0",
                 x=0.95, y=0.95, xref="paper", yref="paper",
@@ -219,21 +227,21 @@ class GradientDescentSimulator:
                     eye=dict(x=x_eye, y=y_eye, z=z_eye)
                 )
             ),
-            width=800,    # Ensure final figure width
-            height=600    # Ensure final figure height
+            width=800,
+            height=600
         )
         
         return fig
 
 # Usage Examples:
-# 1) Default range and camera distance:
-# sim = GradientDescentSimulator()
+# 1) Default settings:
+# sim = StochasticGradientDescentSimulator()
 #
-# 2) Same domain but zoom in more (camera_distance=0.5):
-# sim = GradientDescentSimulator(camera_distance=0.5)
+# 2) Zoom in more (camera_distance=0.5):
+# sim = StochasticGradientDescentSimulator(camera_distance=0.5)
 #
-# 3) Use a smaller domain and a closer camera for a tight view around (0,0):
-# sim = GradientDescentSimulator(grid_range=(-5, 5), camera_distance=0.5)
+# 3) Use a smaller domain (grid_range=(-5, 5)) with a closer camera:
+# sim = StochasticGradientDescentSimulator(grid_range=(-5, 5), camera_distance=0.5)
 #
 # Finally, to display the figure:
 # sim.fig.show()
