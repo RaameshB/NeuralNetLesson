@@ -97,7 +97,10 @@ class MultiMinimaSimulatorAdaptive:
                 yaxis=dict(visible=False, range=[-10, 10]),
                 zaxis=dict(visible=False, range=default_z_range),
                 bgcolor="grey"
-            )
+            ),
+            width=800,
+            height=600
+
         )
         
         # ------------------------------------------------------------

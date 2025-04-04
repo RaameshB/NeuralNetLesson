@@ -69,6 +69,8 @@ class GradientDescentSimulator:
             title_font_color="white",
             paper_bgcolor="grey",
             plot_bgcolor="grey",
+            width=800,   # Set width in pixels (8 inches * 100)
+            height=600,  # Set height in pixels (6 inches * 100)
             scene=dict(
                 xaxis=dict(visible=False, range=[x_range[0], x_range[1]]),
                 yaxis=dict(visible=False, range=[x_range[0], x_range[1]]),
@@ -216,20 +218,22 @@ class GradientDescentSimulator:
                 camera=dict(
                     eye=dict(x=x_eye, y=y_eye, z=z_eye)
                 )
-            )
+            ),
+            width=800,    # Ensure final figure width
+            height=600    # Ensure final figure height
         )
         
         return fig
 
-# Usage Examples
+# Usage Examples:
 # 1) Default range and camera distance:
 # sim = GradientDescentSimulator()
-
+#
 # 2) Same domain but zoom in more (camera_distance=0.5):
 # sim = GradientDescentSimulator(camera_distance=0.5)
-
+#
 # 3) Use a smaller domain and a closer camera for a tight view around (0,0):
 # sim = GradientDescentSimulator(grid_range=(-5, 5), camera_distance=0.5)
-
+#
 # Finally, to display the figure:
 # sim.fig.show()

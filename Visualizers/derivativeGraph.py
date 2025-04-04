@@ -88,10 +88,8 @@ class PlotlySurfaceWithGradient:
                 sizeref=0.5
             )
             data.append(arrow_cone)
-            
-            
         
-        # Create the figure with no visible axes and a grey background.
+        # Create the figure with no visible axes, grey background, and set size to 800x600.
         fig = go.Figure(data=data)
         fig.update_layout(
             title=dict(
@@ -100,6 +98,8 @@ class PlotlySurfaceWithGradient:
                 xanchor='center',
                 font=dict(color='white', size=20)
             ),
+            width=800,   # width in pixels
+            height=600,  # height in pixels
             scene=dict(
                 xaxis=dict(visible=False),
                 yaxis=dict(visible=False),
@@ -110,4 +110,3 @@ class PlotlySurfaceWithGradient:
             margin=dict(l=0, r=0, t=50, b=0)
         )
         fig.show()
-
