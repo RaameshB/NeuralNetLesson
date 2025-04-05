@@ -32,12 +32,11 @@ jobs:
         run: |
           micromamba install -c conda-forge voici
           voici build --contents .
-          # Debug - check output directory
           ls -la
           ls -la _output || echo "_output directory not found"
 
       - name: Setup Pages
-        uses: actions/configure-pages@v2
+        uses: actions/configure-pages@v1
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
