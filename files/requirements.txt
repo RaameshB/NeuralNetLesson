@@ -1,0 +1,7 @@
+IPython
+numpy
+plotly
+matplotlib
+pandas
+notebook
+nbformat
