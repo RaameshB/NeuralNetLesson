@@ -3,4 +3,5 @@ numpy
 plotly
 matplotlib
 pandas
-nbformatgit 
+nbformatgit
+notebook
