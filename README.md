@@ -22,4 +22,4 @@ Ensure that you have some sort of python and jupyter notebook environment instal
 
 The following was produced under the MIT license.
 
- - **Disclaimer:** Python scripts were generated with the assistance of AI.
+ - Python scripts were generated with the assistance of AI.
